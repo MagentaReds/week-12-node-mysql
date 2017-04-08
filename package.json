@@ -1,0 +1,29 @@
+{
+  "name": "week-12-node-mysql",
+  "version": "1.0.0",
+  "description": "Sample Bamazon backend node application.",
+  "main": "bamazon.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MagentaReds/week-12-node-mysql.git"
+  },
+  "keywords": [
+    "node",
+    "mysql",
+    "backend",
+    "javascript"
+  ],
+  "author": "Grant Daniels",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MagentaReds/week-12-node-mysql/issues"
+  },
+  "homepage": "https://github.com/MagentaReds/week-12-node-mysql#readme",
+  "dependencies": {
+    "inquirer": "^3.0.6",
+    "mysql": "^2.13.0"
+  }
+}

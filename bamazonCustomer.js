@@ -54,7 +54,7 @@ function inquiAskCustomer(){
     },
     {
       name: "quant",
-      message: "Number of product to order?",
+      message: "Number of product to order? (Enter 0 to cancel)",
       type: "input",
       validate: function(input){
         if(isNaN(input))
@@ -79,10 +79,12 @@ function inquiAskCustomer(){
     if(index===-1) {
       connection.end();
       return console.log("ID not found, canceling order");
-    }
-    if(bamazonItems[index].stock_quantity<answers.quant) {
+    } else if(bamazonItems[index].stock_quantity<answers.quant) {
       connection.end();
       return console.log("Insufficient stock, canceling order");
+    } else if(answers.quant==0){
+      connection.end();
+      return console.log("Canceling order");
     }
     
     orderItem(index, answers.quant);
@@ -96,9 +98,19 @@ function orderItem(index, quant){
   var newQuant = bamazonItems[index].stock_quantity-quant;
   var id = bamazonItems[index].item_id;
 
-  var query = "UPDATE product SET stock_quantity="+newQuant+" WHERE item_id="+id;
+  //var query = "UPDATE product SET stock_quantity="+newQuant+" WHERE item_id="+id;
 
-  connection.query(query, function(err){
+  // var sql = "UPATE product SET ? WHERE ?";
+  // var inserts = [{"stock_quantity":newQuant}, {"item_id": id}];
+  // sql = mysql.format(sql, inserts);
+  // console.log(sql);
+
+  var sql = "UPDATE product SET ? WHERE ?";
+  var inserts = [{"stock_quantity":newQuant}, {"item_id": id}];
+  sql = mysql.format(sql, inserts);
+  console.log(sql);
+
+  connection.query(sql, function(err){
     if(err)
       return console.log(err);
   });

@@ -4,6 +4,7 @@ var fs = require("fs");
 
 var connection=null;
 var bamazonItems=null;
+var bamazonIds=null;
 
 fs.readFile("mysql_info.json", "utf8", function(err, data){
   if(err)
@@ -39,9 +40,13 @@ function sqlGetItems(){
 
 function displayItems(err, results, fields){
   bamazonItems=results;
+  bamazonIds=[];
+
   for(var i=0; i<results.length; ++i){
     var str="Id: "+results[i].item_id+", Price: $"+results[i].price+", Product: "+results[i].product_name;
     console.log(str);
+
+    bamazonIds.push(results[i].item_id);
   }
 }
 
@@ -49,8 +54,14 @@ function inquiAskCustomer(){
   var questions = [
     {
       name: "id",
-      message: "ID of product you would like to order?",
-      type: "input"
+      message: "ID of product you would like to order? (Enter 0 to cancel)",
+      type: "input",
+      validate: function(input) {
+        if(!bamazonIds.includes(input) && input!=='0')
+          return "Item ID not found";
+        else 
+          return true;
+      }
     },
     {
       name: "quant",
@@ -65,6 +76,9 @@ function inquiAskCustomer(){
           return "Please enter in an intenger";
         else 
           return true;
+      },
+      when: function(answers){
+        return answers.id!=='0';
       }
     }
   ];
@@ -76,15 +90,15 @@ function inquiAskCustomer(){
       if(bamazonItems[i].item_id==answers.id)
         index=i;
 
-    if(index===-1) {
+    if(answers.id==0 || answers.quant==0){
+      connection.end();
+      return console.log("Canceling order");
+    } else if(index===-1) {
       connection.end();
       return console.log("ID not found, canceling order");
     } else if(bamazonItems[index].stock_quantity<answers.quant) {
       connection.end();
       return console.log("Insufficient stock, canceling order");
-    } else if(answers.quant==0){
-      connection.end();
-      return console.log("Canceling order");
     }
     
     orderItem(index, answers.quant);
@@ -108,7 +122,7 @@ function orderItem(index, quant){
   var sql = "UPDATE product SET ? WHERE ?";
   var inserts = [{"stock_quantity":newQuant}, {"item_id": id}];
   sql = mysql.format(sql, inserts);
-  console.log(sql);
+  //console.log(sql);
 
   connection.query(sql, function(err){
     if(err)

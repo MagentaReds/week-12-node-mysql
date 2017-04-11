@@ -57,7 +57,7 @@ function inquiAskCustomer(){
       message: "ID of product you would like to order? (Enter 0 to cancel)",
       type: "input",
       validate: function(input) {
-        if(!bamazonIds.includes(input) && input!=='0')
+        if(!bamazonIds.includes(Number(input)) && input!=='0')
           return "Item ID not found";
         else 
           return true;
@@ -65,15 +65,15 @@ function inquiAskCustomer(){
     },
     {
       name: "quant",
-      message: "Number of product to order? (Enter 0 to cancel)",
+      message: "Number to order? (Enter 0 to cancel)",
       type: "input",
       validate: function(input){
         if(isNaN(input))
           return "You need to enter in a number";
-        else if(Number(input)<0)
-          return "Please enter in a positive quant";
         else if(Number(input)%1!==0)
           return "Please enter in an intenger";
+        else if(Number(input)<0)
+          return "Please enter in a positive number";
         else 
           return true;
       },

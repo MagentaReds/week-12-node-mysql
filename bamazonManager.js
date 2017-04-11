@@ -62,6 +62,9 @@ function main() {
       case choiceEnum.updateInv:
         viewAll(9999999, updateInv);
         break;
+      case choiceEnum.cancel:
+        disconnectDB();
+        break;
     }
 
   });

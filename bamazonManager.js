@@ -106,40 +106,68 @@ function addProduct(){
   var questions = [
     {
       type: "input",
-      message: "Name of new product?",
+      message: "Name of new product? (Enter 0 to cancel)",
       name: "name",
       validate: function(input){
+        if(input.length>50)
+          return "Name is too long."
         return true;
       }
     },
     {
       type: "input",
-      message: "Price of new product?",
+      message: "Price of new product? (Enter 0 to cancel)",
       name: "price",
       validate: function(input){
         return true;
+      },
+      when: function(answers){
+        return answers.name!=='0';
       }
     },
     {
       type: "input",
-      message: "Department of new product?",
+      message: "Department of new product? (Enter 0 to cancel)",
       name: "department",
       validate: function(input){
         return true;
+      },
+      when: function(answers){
+        return answers.name!=='0' && answers.price!=='0';
       }
     },
     {
       type: "input",
-      message: "Stock of new product?",
+      message: "Stock of new product? (Enter 0 to cancel)",
       name: "stock",
       validate: function(input){
         return true;
+      },
+      when: function(answers){
+        return answers.name!=='0' && answers.price!=='0' && answers.department!=='0';
+      }
+    },
+    {
+      type: "confirm",
+      message: "Is this correct?",
+      name: "confirm",
+      default: false,
+       when: function(answers){
+        return answers.name!=='0' && answers.price!=='0' && answers.department!=='0' && answers.stock!=='0';
       }
     }
   ];
 
   inquirer.prompt(questions).then(function(answers){
-    insertDB(answers);
+    if(answers.name==='0' || answers.price==='0' || answers.department==='0' || answers.stock==='0') {
+      console.log("Canceling adding new product")
+      disconnectDB();
+      return;
+    }
+    else if(answers.confirm)
+      return insertDB(answers);
+    else
+      return addProduct();
   });
 }
 

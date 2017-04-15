@@ -1,9 +1,10 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 var fs = require("fs");
+var cli_table = require("cli-table");
 
-var connection=null;
-var bamazonItems=null;
+var connection = null;
+var bamazonItems = null;
 var bamazonIds = null;
 
 var choiceEnum = {
@@ -90,6 +91,7 @@ function viewAll(inv=9999999, callback=undefined){
 function displayItems(items){
   for(var i=0; i<items.length; ++i){
     var str="Id: "+items[i].item_id
+      +", Department_Id: "+items[i].department_id
       +", Price: $"+items[i].price
       +", Product: "+items[i].product_name
       +", Stock: "+items[i].stock_quantity;
@@ -175,7 +177,7 @@ function insertDB(val){
   var sql = "INSERT INTO product SET ?";
   var inserts={
     product_name: val.name,
-    department_name: val.department,
+    department_id: val.department,
     price: val.price,
     stock_quantity: val.stock
   };

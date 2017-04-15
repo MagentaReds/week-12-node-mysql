@@ -29,13 +29,14 @@ function startProgram(){
 }
 
 function sqlGetItems(){
-  connection.query("select * from product", function(err, results, fields){
-    if(err)
-      return console.log(err);
+  connection.query("select * from product LEFT JOIN department ON product.department_id=department.department_id", 
+    function(err, results, fields){
+      if(err)
+        return console.log(err);
 
-    displayItems(err, results, fields);
-    inquiAskCustomer();
-  });
+      displayItems(err, results, fields);
+      inquiAskCustomer();
+    });
 }
 
 function displayItems(err, results, fields){
@@ -102,6 +103,10 @@ function inquiAskCustomer(){
     }
     
     orderItem(index, answers.quant);
+    addSales(index, answers.quant);
+
+    connection.end();
+    console.log("Connection to DB closed");
   });
 }
 
@@ -130,6 +135,18 @@ function orderItem(index, quant){
   });
 
   console.log("Order placed!");
-  connection.end();
-  console.log("Connection to DB closed");
+}
+
+function addSales(index, quant){
+  var deptId = bamazonItems[index].department_id;
+  var newTotal= bamazonItems[index].total_sales + (quant*100*bamazonItems[index].price)/100;
+
+  var sql = "UPDATE department SET ? WHERE ?";
+  var inserts = [{"total_sales":newTotal}, {"department_id": deptId}];
+  sql = mysql.format(sql, inserts);
+
+  connection.query(sql, function(err){
+    if(err)
+      return console.log(err);
+  });
 }

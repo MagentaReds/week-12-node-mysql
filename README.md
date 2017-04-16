@@ -6,14 +6,18 @@ That being said, I am using inquirer and cli-table for some cli formatting and e
 
 Another shortcoming in my, my sql calls to access the database are only updated once at the start of the program, so the app could be accessing old data.  Doing it this way might cause some issues if this was in a real store with lots of concurrent sql connections and customer orders.  Then again, the server is really the only one that is going to be accessing the database and this is just practice.
 
-### Note for mysql_info.json
+#### Note for mysql_info.json
 This file holds the connection info for your mysql connection.  This file is then read by each app when run.
 
 sample_mysql_info.json is included as a sample file for the format used.
 
-### Notes for schema.sql and seeds.sql
+#### Notes for schema.sql and seeds.sql
 
 These files include the sql queries that settup a sample database/tables and mock items to test the code.
+
+#### Notes on error handeling
+
+Right now, I'm not handeling any thrown errors gracefully, like if the app cannot connect to the mysql server.  The errors are just console.log'ed and the programs exit.  This is due limited time to develop the code, not inability to handle the errors.
 
 ## bamazonCustomer.js
 

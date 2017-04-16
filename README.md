@@ -25,6 +25,11 @@ This app gets and displays a list of all items availabe for purchase.  The user 
 
 Otherwise it then checks to see if there is sufficient stock and either order's the amount, and removes that amount from the stock in the database.  And for challeng 3, it also update's the department's total_sales.
 
+#### Screen Shots
+Start program:
+![start](images/customer_1_start_program.png?raw=true "Start Program")
+
+
 ## bamazonManager.js
 
 This app displays a list of actions for the manager.  View all items, and view all items with less than 5 stock do what they say. 

@@ -1,11 +1,12 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 var fs = require("fs");
-var cli_table = require("cli-table");
+var Table = require("cli-table");
 
 var connection = null;
 var bamazonItems = null;
 var bamazonIds = null;
+var bamazonDeptIds = null;
 
 var choiceEnum = {
   viewAll: "View all products for sale",
@@ -58,7 +59,7 @@ function main() {
         disconnectDB();
         break;
       case choiceEnum.addProduct:
-        addProduct();
+        getDepartments();
         break;
       case choiceEnum.updateInv:
         viewAll(9999999, updateInv);
@@ -72,7 +73,7 @@ function main() {
 }
 
 function viewAll(inv=9999999, callback=undefined){
-  var sql="SELECT * FROM product WHERE stock_quantity<?";
+  var sql="SELECT * FROM product LEFT JOIN department ON product.department_id=department.department_id WHERE stock_quantity<?";
   var inserts = [inv];
   sql = mysql.format(sql, inserts);
 
@@ -89,19 +90,43 @@ function viewAll(inv=9999999, callback=undefined){
 }
 
 function displayItems(items){
+    var myTable = new Table({
+    head: ["Item ID", "Dept Name", "Product Name", "Price", "Stock"],
+    colWidths: [10, 25, 40, 10, 10]
+  });
+
   for(var i=0; i<items.length; ++i){
-    var str="Id: "+items[i].item_id
-      +", Department_Id: "+items[i].department_id
-      +", Price: $"+items[i].price
-      +", Product: "+items[i].product_name
-      +", Stock: "+items[i].stock_quantity;
-    console.log(str);
+    var ref= items[i];
+    myTable.push([ref.item_id, ref.department_name, ref.product_name, ref.price, ref.stock_quantity]);
   }
+
+  console.log(myTable.toString());
 }
 
 function disconnectDB(){
   connection.end();
   console.log("Disconnected from DB");
+}
+
+function getDepartments(){
+  connection.query("SELECT department_id, department_name FROM department", function(err, results, fields){
+    if(err)
+      return console.log(err);
+
+    var myTable = new Table({
+      head: ["Dept ID", "Dept Name"],
+      colWidths: [10, 40]
+    });
+
+    bamazonDeptIds=[];
+    for(var i=0; i<results.length; ++i) {
+      bamazonDeptIds.push(results[i].department_id);
+      myTable.push([results[i].department_id, results[i].department_name]);
+    }
+    console.log(myTable.toString());
+    
+    addProduct();
+  });
 }
 
 function addProduct(){
@@ -113,6 +138,8 @@ function addProduct(){
       validate: function(input){
         if(input.length>50)
           return "Name is too long."
+        else if(input==="")
+          return "Empty input not accepted";
         return true;
       }
     },
@@ -121,7 +148,16 @@ function addProduct(){
       message: "Price of new product? (Enter 0 to cancel)",
       name: "price",
       validate: function(input){
-        return true;
+        if(isNaN(input))
+          return "You need to enter in a number";
+        else if(input==="")
+          return "Empty input not accepted";
+        else if((Number(input)*100)%1!==0)
+          return "Please enter in an valid price";
+        else if(Number(input)<0)
+          return "Please enter in a positive number";
+        else 
+          return true;
       },
       when: function(answers){
         return answers.name!=='0';
@@ -129,10 +165,17 @@ function addProduct(){
     },
     {
       type: "input",
-      message: "Department of new product? (Enter 0 to cancel)",
+      message: "Department ID of new product? (Enter 0 to cancel)",
       name: "department",
       validate: function(input){
-        return true;
+        if(input==='0')
+          return true;
+        else if(input==="")
+          return "Empty input not accepted";
+        else if(!bamazonDeptIds.includes(Number(input)))
+          return "Department ID not found";
+        else
+          return true;
       },
       when: function(answers){
         return answers.name!=='0' && answers.price!=='0';
@@ -143,7 +186,16 @@ function addProduct(){
       message: "Stock of new product? (Enter 0 to cancel)",
       name: "stock",
       validate: function(input){
-        return true;
+        if(isNaN(input))
+          return "You need to enter in a number";
+        else if(input==="")
+          return "Empty input not accepted";
+        else if(Number(input)%1!==0)
+          return "Please enter in an intenger";
+        else if(Number(input)<0)
+          return "Please enter in a positive number";
+        else 
+          return true;
       },
       when: function(answers){
         return answers.name!=='0' && answers.price!=='0' && answers.department!=='0';
@@ -204,7 +256,6 @@ function updateInv(){
   for(var i=0; i<bamazonItems.length; ++i)
     bamazonIds.push(bamazonItems[i].item_id);
 
-  console.log(bamazonIds);
 
   var questions = [
     {
@@ -256,7 +307,13 @@ function updateInv(){
         console.log("Insuffecient stock to remove amount");
         disconnectDB();
      } else {
-        console.log("Adding/Removing "+answers.quant+" from Item_ID: "+answers.id);
+       var str = " "+answers.quant+" from Item ID: "+answers.id
+        if(Number(answers.quant)>0)
+          str="Adding"+str;
+        else
+          str="Removing"+str;
+
+        console.log(str);
         updateDB(answers.id, new_stock);
       }
     }

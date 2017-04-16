@@ -1,6 +1,7 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 var fs = require("fs");
+var Table = require("cli-table");
 
 var connection=null;
 var bamazonItems=null;
@@ -43,12 +44,18 @@ function displayItems(err, results, fields){
   bamazonItems=results;
   bamazonIds=[];
 
-  for(var i=0; i<results.length; ++i){
-    var str="Id: "+results[i].item_id+", Price: $"+results[i].price+", Product: "+results[i].product_name;
-    console.log(str);
+  var myTable = new Table({
+    head: ["Item ID", "Item Name", "Price", "Department", "Stock"],
+    colWidths: [11, 40, 10, 25, 10]
+  });
 
+  for(var i=0; i<results.length; ++i){
+    var ref = results[i];
+    myTable.push([ref.item_id, ref.product_name, ref.price, ref.department_name, ref.stock_quantity]);
     bamazonIds.push(results[i].item_id);
   }
+
+  console.log(myTable.toString());
 }
 
 function inquiAskCustomer(){
@@ -139,7 +146,7 @@ function orderItem(index, quant){
 
 function addSales(index, quant){
   var deptId = bamazonItems[index].department_id;
-  var newTotal= bamazonItems[index].total_sales + (quant*100*bamazonItems[index].price)/100;
+  var newTotal= bamazonItems[index].total_sales + (quant*100*bamazonItems[index].price)/100; //doing *100/100 to avoid floating point error silliness
 
   var sql = "UPDATE department SET ? WHERE ?";
   var inserts = [{"total_sales":newTotal}, {"department_id": deptId}];

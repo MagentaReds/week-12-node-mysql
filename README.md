@@ -62,7 +62,7 @@ Selecting add new item asks the user a series of questions about the new product
 Start Program
 ![](images/manager_01_start_program.png?raw=true "")
 
-Chose Exit
+Choosing Exit
 ![](images/manager_02_exit.png?raw=true "")
 
 View all items

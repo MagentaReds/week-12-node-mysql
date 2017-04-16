@@ -109,4 +109,4 @@ Confirming adding department with view all
 ![](images/supervisor_05_add_department_successs_confirm.png?raw=true "")
 
 Canceling adding a department
-![](imagessupervisor_06_add_department_cancel.png?raw=true "")
+![](images/supervisor_06_add_department_cancel.png?raw=true "")

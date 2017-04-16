@@ -19,6 +19,9 @@ These files include the sql queries that settup a sample database/tables and moc
 
 Right now, I'm not handeling any thrown errors gracefully, like if the app cannot connect to the mysql server.  The errors are just console.log'ed and the programs exit.  This is due limited time to develop the code, not inability to handle the errors.
 
+Error when connecting to MySQL server
+![](images/cant_connect_mysql.png?raw=true "")
+
 ## bamazonCustomer.js
 
 This app gets and displays a list of all items availabe for purchase.  The user then enter's in a item_id they'd like to order.  And then a quantity to order.  If the user enter's in 0 for either value, the app cancels the order and exits.
@@ -29,6 +32,22 @@ Otherwise it then checks to see if there is sufficient stock and either order's 
 Start program:
 ![start](images/customer_1_start_program.png?raw=true "Start Program")
 
+Showing of input validation for Item ID
+![](images/customer_2_id_not_number.png?raw=true "")
+![](images/customer_3_id_not_number.png?raw=true "")
+
+Valid Item ID entered, on to the next step
+![](images/customer_4_valid_id.png?raw=true "")
+
+Example of input validation for quant ordering
+![](images/customer_7_invalid_quant_negative.png?raw=true "")
+
+Successful order
+![](images/customer_10_successful_order.png?raw=true "")
+
+Unsuccessful order
+![](images/customer_11_unsuccessful_order.png?raw=true "")
+
 
 ## bamazonManager.js
 
@@ -38,8 +57,56 @@ Selecting adjust stock quantities allows the manager to add/remove stock for an 
 
 Selecting add new item asks the user a series of questions about the new product to add, validating each input along the way.
 
+#### Screen Shots
+
+Start Program
+![](images/manager_01_start_program.png?raw=true "")
+
+Chose Exit
+![](images/manager_02_exit.png?raw=true "")
+
+View all items
+![](images/manager_03_view_all.png?raw=true "")
+
+View low inv items
+![](images/manager_04_view_low.png?raw=true "")
+
+Successfully adding a new item (input validation not shown, but is present)
+![](images/manager_05_add_item_successful.png?raw=true "")
+
+Canceling adding a new item
+![](images/manager_06_add_item_cancel.png?raw=true "")
+
+Update inventory stock successfully
+![](images/manager_07_update_inv_success.png?raw=true "")
+
+Update inventory stock successfully with negative number
+![](images/manager_08_update_inv_success_with_neg.png?raw=true "")
+
+
+
 ## bamazonSupervisor.js
 
 View Product Sales by Department displays all departs and the profit for the departments.
 
 Create New Department displays all departments and asks the user for information about the new department, validating input along the way.
+
+#### Screenshots
+
+Start Program
+![](images/supervisor_01_start_program.png?raw=true "")
+
+Selecting Exit
+![](images/supervisor_02_exit.png?raw=true "")
+
+View all departments with their profits.
+![](images/supervisor_03_view_department.png?raw=true "")
+
+Successfully add a deparment (input validation not shown, but is working)
+![](images/supervisor_04_add_department_successs.png?raw=true "")
+
+Confirming adding department with view all
+![](images/supervisor_05_add_department_successs_confirm.png?raw=true "")
+
+Canceling adding a department
+![](imagessupervisor_06_add_department_cancel.png?raw=true "")
